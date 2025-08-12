@@ -1,15 +1,28 @@
-# Queue implementation in python
+
+"""
+Queue implementation in Python.
+"""
+
+from typing import Any, List
 
 class Queue:
+    """
+    A simple fixed-size queue implementation.
+    """
+    def __init__(self, k: int) -> None:
+        """
+        Initialize the queue with a fixed size k.
+        """
+        self.k: int = k
+        self.queue: List[Any] = [None] * k
+        self.head: int = -1
+        self.tail: int = -1
 
-    def __init__(self, k):
-        self.k = k
-        self.queue = [None] * k
-        self.head = self.tail = -1
-
-    # Insert an element into the queue
-    def enqueue(self, data):
-
+    def enqueue(self, data: Any) -> None:
+        """
+        Insert an element into the queue.
+        Prints a message if the queue is full.
+        """
         if self.tail == self.k - 1:
             print("Queue is full")
         else:
@@ -19,27 +32,31 @@ class Queue:
             self.queue[self.tail] = data
             print(f"Element {data} is inserted into the queue")
 
-    # Remove an element from the queue
-    def dequeue(self):
-
+    def dequeue(self) -> Any:
+        """
+        Remove an element from the queue.
+        Prints a message if the queue is empty.
+        Returns the removed element or None.
+        """
         if self.head == -1:
             print("Queue is empty")
-
+            return None
         elif self.head == self.tail:
             temp = self.queue[self.head]
             self.head = self.tail = -1
             print(f"Element {temp} is removed from the queue")
             return temp
-
         else:
             temp = self.queue[self.head]
             self.head += 1
             print(f"Element {temp} is removed from the queue")
             return temp
 
-    # Display the queue
-    def display(self):
-
+    def display(self) -> None:
+        """
+        Display the elements of the queue.
+        Prints a message if the queue is empty.
+        """
         if self.head == -1:
             print("Queue is empty")
         else:
