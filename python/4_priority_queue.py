@@ -1,63 +1,58 @@
-# Priority Queue implementation in Python
 
-# Function to heapify the tree
-def heapify(arr, n, i):
-    # Find the largest among root, left child, and right child
+"""
+Priority Queue (Max-Heap) implementation in Python.
+"""
+
+from typing import List
+
+def heapify(arr: List[int], n: int, i: int) -> None:
+    """
+    Heapify subtree rooted at index i in array arr of size n.
+    """
     largest = i
     l = 2 * i + 1
     r = 2 * i + 2
 
     if l < n and arr[i] < arr[l]:
         largest = l
-
     if r < n and arr[largest] < arr[r]:
         largest = r
-
-    # Swap and continue heapifying if root is not the largest
     if largest != i:
         arr[i], arr[largest] = arr[largest], arr[i]
         heapify(arr, n, largest)
 
-
-# Function to insert an element into the tree
-def insert(array, newNum):
+def insert(array: List[int], newNum: int) -> None:
+    """
+    Insert a new number into the heap.
+    """
     size = len(array)
-    if size == 0:
-        array.append(newNum)
-    else:
-        array.append(newNum)
-        for i in range((size // 2) - 1, -1, -1):
-            heapify(array, size, i)
+    array.append(newNum)
+    for i in range((size // 2) - 1, -1, -1):
+        heapify(array, size, i)
 
-
-# Function to delete an element from the tree
-def deleteNode(array, num):
+def deleteNode(array: List[int], num: int) -> None:
+    """
+    Delete a number from the heap.
+    """
     size = len(array)
-    i = 0
-    for i in range(0, size):
+    for i in range(size):
         if num == array[i]:
             break
-
-    # Swap the element to delete with the last element
+    else:
+        return  # Element not found
     array[i], array[size - 1] = array[size - 1], array[i]
-
-    # Remove the last element (the one we want to delete)
     array.pop()
-
-    # Rebuild the heap
     for i in range((len(array) // 2) - 1, -1, -1):
         heapify(array, len(array), i)
 
 
-arr = []
-
-insert(arr, 3)
-insert(arr, 4)
-insert(arr, 9)
-insert(arr, 5)
-insert(arr, 2)
-
-print("Max-Heap array: " + str(arr))
-
-deleteNode(arr, 4)
-print("After deleting an element: " + str(arr))
+if __name__ == "__main__":
+    arr: List[int] = []
+    insert(arr, 3)
+    insert(arr, 4)
+    insert(arr, 9)
+    insert(arr, 5)
+    insert(arr, 2)
+    print(f"Max-Heap array: {arr}")
+    deleteNode(arr, 4)
+    print(f"After deleting an element: {arr}")
