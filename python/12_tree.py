@@ -1,57 +1,56 @@
-# Tree traversal in Python
+
+"""
+Tree traversal in Python.
+"""
+
+from typing import Optional
 
 
 class Node:
-    def __init__(self, item):
-        self.left = None
-        self.right = None
-        self.val = item
+    """
+    A node in a binary tree.
+    """
+
+    def __init__(self, item: int) -> None:
+        """Initialize a tree node with value and left/right children."""
+        self.left: Optional['Node'] = None
+        self.right: Optional['Node'] = None
+        self.val: int = item
 
 
-def inorder(root):
-
+def inorder(root: Optional[Node]) -> None:
+    """Inorder tree traversal (left, root, right)."""
     if root:
-        # Traverse left
         inorder(root.left)
-        # Traverse root
-        print(str(root.val) + "->", end='')
-        # Traverse right
+        print(f"{root.val}->", end='')
         inorder(root.right)
 
 
-def postorder(root):
-
+def postorder(root: Optional[Node]) -> None:
+    """Postorder tree traversal (left, right, root)."""
     if root:
-        # Traverse left
         postorder(root.left)
-        # Traverse right
         postorder(root.right)
-        # Traverse root
-        print(str(root.val) + "->", end='')
+        print(f"{root.val}->", end='')
 
 
-def preorder(root):
-
+def preorder(root: Optional[Node]) -> None:
+    """Preorder tree traversal (root, left, right)."""
     if root:
-        # Traverse root
-        print(str(root.val) + "->", end='')
-        # Traverse left
+        print(f"{root.val}->", end='')
         preorder(root.left)
-        # Traverse right
         preorder(root.right)
 
 
-root = Node(1)
-root.left = Node(2)
-root.right = Node(3)
-root.left.left = Node(4)
-root.left.right = Node(5)
-
-print("Inorder traversal ")
-inorder(root)
-
-print("\nPreorder traversal ")
-preorder(root)
-
-print("\nPostorder traversal ")
-postorder(root)
+if __name__ == "__main__":
+    root = Node(1)
+    root.left = Node(2)
+    root.right = Node(3)
+    root.left.left = Node(4)
+    root.left.right = Node(5)
+    print("Inorder traversal ")
+    inorder(root)
+    print("\nPreorder traversal ")
+    preorder(root)
+    print("\nPostorder traversal ")
+    postorder(root)
