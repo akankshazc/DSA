@@ -1,67 +1,65 @@
-# Python program to demonstrate working of HashTable
 
-# Initialize the hash table with 10 empty lists (each index is a list to handle collisions)
-hashTable = [[] for _ in range(10)]
+"""
+Python program to demonstrate working of a simple HashTable.
+"""
+
+from typing import Any, List, Tuple
+
+hash_table: List[List[Tuple[int, Any]]] = [[] for _ in range(10)]
 
 
-def checkPrime(n):
-    if n == 1 or n == 0:
-        return 0
-
+def check_prime(n: int) -> bool:
+    """Check if a number is prime."""
+    if n in (0, 1):
+        return False
     for i in range(2, n // 2):
         if n % i == 0:
-            return 0
+            return False
+    return True
 
-    return 1
 
-
-def getPrime(n):
+def get_prime(n: int) -> int:
+    """Get the next prime number greater than or equal to n."""
     if n % 2 == 0:
-        n = n + 1
-
-    while not checkPrime(n):
+        n += 1
+    while not check_prime(n):
         n += 2
-
     return n
 
 
-def hashFunction(key):
-    capacity = getPrime(10)
+def hash_function(key: int) -> int:
+    """Hash function to map keys to hash table indices."""
+    capacity = get_prime(10)
     return key % capacity
 
 
-def insertData(key, data):
-    index = hashFunction(key)
-    # Check if the key already exists in the list to update it, otherwise append
-    found = False
-    for i, kv in enumerate(hashTable[index]):
+def insert_data(key: int, data: Any) -> None:
+    """Insert or update a key-value pair in the hash table."""
+    index = hash_function(key)
+    for i, kv in enumerate(hash_table[index]):
         if kv[0] == key:
-            hashTable[index][i] = (key, data)  # Update existing key-value pair
-            found = True
+            hash_table[index][i] = (key, data)
             break
-    if not found:
-        # Add new key-value pair if not found
-        hashTable[index].append((key, data))
+    else:
+        hash_table[index].append((key, data))
 
 
-def removeData(key):
-    index = hashFunction(key)
-    # Remove the key-value pair from the list if it exists
-    for i, kv in enumerate(hashTable[index]):
+def remove_data(key: int) -> None:
+    """Remove a key-value pair from the hash table if it exists."""
+    index = hash_function(key)
+    for i, kv in enumerate(hash_table[index]):
         if kv[0] == key:
-            del hashTable[index][i]
+            del hash_table[index][i]
             break
 
 
-# Test the hash table
-insertData(123, "apple")
-insertData(432, "mango")
-insertData(213, "banana")
-insertData(654, "guava")
-insertData(213, "orange")  # This should update the value for key 213
-
-print(hashTable)
-
-removeData(123)
-
-print(hashTable)
+if __name__ == "__main__":
+    # Test the hash table
+    insert_data(123, "apple")
+    insert_data(432, "mango")
+    insert_data(213, "banana")
+    insert_data(654, "guava")
+    insert_data(213, "orange")  # This should update the value for key 213
+    print(hash_table)
+    remove_data(123)
+    print(hash_table)
