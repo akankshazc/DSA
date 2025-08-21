@@ -1,22 +1,31 @@
-# Inserting a key on a B-tree in Python
 
+"""
+Insert a key into a B-tree in Python.
+"""
 
-# Create a node
+from typing import List, Tuple, Optional
+
 class BTreeNode:
-    def __init__(self, leaf=False):
-        self.leaf = leaf
-        self.keys = []
-        self.child = []
+    """
+    A node in a B-tree.
+    """
+    def __init__(self, leaf: bool = False) -> None:
+        """Initialize a B-tree node."""
+        self.leaf: bool = leaf
+        self.keys: List[Tuple] = []
+        self.child: List['BTreeNode'] = []
 
-
-# Tree
 class BTree:
-    def __init__(self, t):
-        self.root = BTreeNode(True)
-        self.t = t
+    """
+    B-tree with insertion and printing operations.
+    """
+    def __init__(self, t: int) -> None:
+        """Initialize a B-tree with minimum degree t."""
+        self.root: BTreeNode = BTreeNode(True)
+        self.t: int = t
 
-    # Insert node
-    def insert(self, k):
+    def insert(self, k: Tuple) -> None:
+        """Insert a key into the B-tree."""
         root = self.root
         if len(root.keys) == (2 * self.t) - 1:
             temp = BTreeNode()
@@ -27,8 +36,8 @@ class BTree:
         else:
             self.insert_non_full(root, k)
 
-    # Insert nonfull
-    def insert_non_full(self, x, k):
+    def insert_non_full(self, x: BTreeNode, k: Tuple) -> None:
+        """Insert a key into a non-full node."""
         i = len(x.keys) - 1
         if x.leaf:
             x.keys.append((None, None))
@@ -46,8 +55,8 @@ class BTree:
                     i += 1
             self.insert_non_full(x.child[i], k)
 
-    # Split the child
-    def split_child(self, x, i):
+    def split_child(self, x: BTreeNode, i: int) -> None:
+        """Split the child of node x at index i."""
         t = self.t
         y = x.child[i]
         z = BTreeNode(y.leaf)
@@ -59,9 +68,11 @@ class BTree:
             z.child = y.child[t: 2 * t]
             y.child = y.child[0: t - 1]
 
-    # Print the tree
-    def print_tree(self, x, l=0):
-        print("Level ", l, " ", len(x.keys), end=":")
+    def print_tree(self, x: Optional[BTreeNode], l: int = 0) -> None:
+        """Print the B-tree structure level by level."""
+        if x is None:
+            return
+        print(f"Level {l} {len(x.keys)}:", end=" ")
         for i in x.keys:
             print(i, end=" ")
         print()
@@ -71,12 +82,10 @@ class BTree:
                 self.print_tree(i, l)
 
 
-def main():
+def main() -> None:
     B = BTree(3)
-
     for i in range(10):
         B.insert((i, 2 * i))
-
     B.print_tree(B.root)
 
 
