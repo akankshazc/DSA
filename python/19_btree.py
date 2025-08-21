@@ -1,22 +1,37 @@
-# Searching a key on a B-tree in Python
 
-# Create a node
+"""
+B-tree implementation in Python.
+"""
+
+from typing import List, Tuple, Optional
+
+
 class BTreeNode:
-    def __init__(self, leaf=False):
-        self.leaf = leaf
-        self.keys = []
-        self.child = []
+    """
+    A node in a B-tree.
+    """
 
-# Tree
+    def __init__(self, leaf: bool = False) -> None:
+        """Initialize a B-tree node."""
+        self.leaf: bool = leaf
+        self.keys: List[Tuple] = []
+        self.child: List['BTreeNode'] = []
 
 
 class BTree:
-    def __init__(self, t):
-        self.root = BTreeNode(True)
-        self.t = t
+    """
+    B-tree with insertion, deletion, and printing operations.
+    """
+
+    def __init__(self, t: int) -> None:
+        """Initialize a B-tree with minimum degree t."""
+        self.root: BTreeNode = BTreeNode(True)
+        self.t: int = t
 
     # Insert a key
-    def insert(self, k):
+
+    def insert(self, k: Tuple) -> None:
+        """Insert a key into the B-tree."""
         root = self.root
         if len(root.keys) == (2 * self.t) - 1:
             temp = BTreeNode()
@@ -28,7 +43,9 @@ class BTree:
             self.insert_non_full(root, k)
 
     # Insert non full
-    def insert_non_full(self, x, k):
+
+    def insert_non_full(self, x: BTreeNode, k: Tuple) -> None:
+        """Insert a key into a non-full node."""
         i = len(x.keys) - 1
         if x.leaf:
             x.keys.append((None, None))
@@ -47,7 +64,9 @@ class BTree:
             self.insert_non_full(x.child[i], k)
 
     # Split the child
-    def split_child(self, x, i):
+
+    def split_child(self, x: BTreeNode, i: int) -> None:
+        """Split the child of node x at index i."""
         t = self.t
         y = x.child[i]
         z = BTreeNode(y.leaf)
@@ -60,7 +79,9 @@ class BTree:
             y.child = y.child[0: t]
 
     # Delete a node
-    def delete(self, x, k):
+
+    def delete(self, x: BTreeNode, k: Tuple) -> None:
+        """Delete a key from the B-tree."""
         t = self.t
         i = 0
         while i < len(x.keys) and k[0] > x.keys[i][0]:
@@ -79,7 +100,8 @@ class BTree:
                 self.fill(x, i)
             self.delete(x.child[i], k)
 
-    def delete_internal_node(self, x, k, i):
+    def delete_internal_node(self, x: BTreeNode, k: Tuple, i: int) -> None:
+        """Delete a key from an internal node."""
         t = self.t
         # Case 2a: Predecessor has enough keys
         if len(x.child[i].keys) >= t:
@@ -96,20 +118,24 @@ class BTree:
             self.merge(x, i)
             self.delete(x.child[i], k)
 
-    def get_predecessor(self, x, i):
+    def get_predecessor(self, x: BTreeNode, i: int) -> Tuple:
+        """Get the predecessor key for deletion."""
         cur = x.child[i]
         while not cur.leaf:
-            cur = cur.child[len(cur.child) - 1]
-        return cur.keys[len(cur.keys) - 1]
+            cur = cur.child[-1]
+        return cur.keys[-1]
 
-    def get_successor(self, x, i):
+    def get_successor(self, x: BTreeNode, i: int) -> Tuple:
+        """Get the successor key for deletion."""
         cur = x.child[i + 1]
         while not cur.leaf:
             cur = cur.child[0]
         return cur.keys[0]
 
     # Merge function to merge two children
-    def merge(self, x, i):
+
+    def merge(self, x: BTreeNode, i: int) -> None:
+        """Merge two children of node x at index i."""
         t = self.t
         child = x.child[i]
         sibling = x.child[i + 1]
@@ -128,7 +154,9 @@ class BTree:
             self.root = child
 
     # Fill function to ensure child has at least t keys
-    def fill(self, x, i):
+
+    def fill(self, x: BTreeNode, i: int) -> None:
+        """Ensure child has at least t keys by borrowing or merging."""
         t = self.t
         # Borrow from the previous sibling
         if i != 0 and len(x.child[i - 1].keys) >= t:
@@ -143,7 +171,8 @@ class BTree:
             else:
                 self.merge(x, i - 1)
 
-    def borrow_from_prev(self, x, i):
+    def borrow_from_prev(self, x: BTreeNode, i: int) -> None:
+        """Borrow a key from the previous sibling."""
         child = x.child[i]
         sibling = x.child[i - 1]
         # Move the last key from sibling to x
@@ -153,7 +182,8 @@ class BTree:
         if not child.leaf:
             child.child.insert(0, sibling.child.pop())
 
-    def borrow_from_next(self, x, i):
+    def borrow_from_next(self, x: BTreeNode, i: int) -> None:
+        """Borrow a key from the next sibling."""
         child = x.child[i]
         sibling = x.child[i + 1]
         # Move the first key from sibling to x
@@ -164,8 +194,12 @@ class BTree:
             child.child.append(sibling.child.pop(0))
 
     # Print the tree
-    def print_tree(self, x, l=0):
-        print("Level ", l, " ", len(x.keys), end=":")
+
+    def print_tree(self, x: Optional[BTreeNode], l: int = 0) -> None:
+        """Print the B-tree structure level by level."""
+        if x is None:
+            return
+        print(f"Level {l} {len(x.keys)}:", end=" ")
         for i in x.keys:
             print(i, end=" ")
         print()
@@ -175,11 +209,11 @@ class BTree:
                 self.print_tree(i, l)
 
 
-# Example usage
-B = BTree(3)
-for i in range(10):
-    B.insert((i, 2 * i))
-B.print_tree(B.root)
-B.delete(B.root, (8,))
-print("\n")
-B.print_tree(B.root)
+if __name__ == "__main__":
+    B = BTree(3)
+    for i in range(10):
+        B.insert((i, 2 * i))
+    B.print_tree(B.root)
+    B.delete(B.root, (8,))
+    print("\n")
+    B.print_tree(B.root)
