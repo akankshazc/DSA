@@ -1,21 +1,36 @@
-# Deleting a key on a B-tree in Python
+
+"""
+Deleting a key from a B-tree in Python.
+This script implements B-tree insertion and deletion operations.
+"""
 
 
-# Btree node
+
+from typing import List, Tuple, Optional
+
 class BTreeNode:
-    def __init__(self, leaf=False):
-        self.leaf = leaf
-        self.keys = []
-        self.child = []
+    """
+    Node of a B-tree.
+    """
+    def __init__(self, leaf: bool = False):
+        self.leaf: bool = leaf
+        self.keys: List[Tuple] = []
+        self.child: List['BTreeNode'] = []
+
 
 
 class BTree:
-    def __init__(self, t):
-        self.root = BTreeNode(True)
-        self.t = t
+    """
+    B-tree implementation supporting insert and delete operations.
+    """
+    def __init__(self, t: int):
+        self.root: BTreeNode = BTreeNode(True)
+        self.t: int = t
 
-    # Insert a key
-    def insert(self, k):
+    def insert(self, k: Tuple):
+        """
+        Insert a key into the B-tree.
+        """
         root = self.root
         if len(root.keys) == (2 * self.t) - 1:
             temp = BTreeNode()
@@ -26,8 +41,10 @@ class BTree:
         else:
             self.insert_non_full(root, k)
 
-    # Insert non full
-    def insert_non_full(self, x, k):
+    def insert_non_full(self, x: BTreeNode, k: Tuple):
+        """
+        Insert a key into a non-full node.
+        """
         i = len(x.keys) - 1
         if x.leaf:
             x.keys.append((None, None))
@@ -45,8 +62,10 @@ class BTree:
                     i += 1
             self.insert_non_full(x.child[i], k)
 
-    # Split the child
-    def split_child(self, x, i):
+    def split_child(self, x: BTreeNode, i: int) -> None:
+        """
+        Split the child of a node.
+        """
         t = self.t
         y = x.child[i]
         z = BTreeNode(y.leaf)
@@ -58,8 +77,10 @@ class BTree:
             z.child = y.child[t: 2 * t]
             y.child = y.child[0: t - 1]
 
-    # Delete a node
-    def delete(self, x, k):
+    def delete(self, x: BTreeNode, k: Tuple) -> None:
+        """
+        Delete a key from the B-tree.
+        """
         t = self.t
         i = 0
         while i < len(x.keys) and k[0] > x.keys[i][0]:
@@ -94,8 +115,10 @@ class BTree:
                     self.delete_merge(x, i, i - 1)
             self.delete(x.child[i], k)
 
-    # Delete internal node
-    def delete_internal_node(self, x, k, i):
+    def delete_internal_node(self, x: BTreeNode, k: Tuple, i: int) -> None:
+        """
+        Delete a key from an internal node.
+        """
         t = self.t
         if x.leaf:
             if x.keys[i][0] == k[0]:
@@ -113,29 +136,35 @@ class BTree:
             self.delete_merge(x, i, i + 1)
             self.delete_internal_node(x.child[i], k, self.t - 1)
 
-    # Delete the predecessor
-    def delete_predecessor(self, x):
+    def delete_predecessor(self, x: BTreeNode):
+        """
+        Delete the predecessor key.
+        """
         if x.leaf:
-            return x.pop()
+            return x.keys.pop()
         n = len(x.keys) - 1
         if len(x.child[n].keys) >= self.t:
             self.delete_sibling(x, n + 1, n)
         else:
             self.delete_merge(x, n, n + 1)
-        self.delete_predecessor(x.child[n])
+        return self.delete_predecessor(x.child[n])
 
-    # Delete the successor
-    def delete_successor(self, x):
+    def delete_successor(self, x: BTreeNode):
+        """
+        Delete the successor key.
+        """
         if x.leaf:
             return x.keys.pop(0)
         if len(x.child[1].keys) >= self.t:
             self.delete_sibling(x, 0, 1)
         else:
             self.delete_merge(x, 0, 1)
-        self.delete_successor(x.child[0])
+        return self.delete_successor(x.child[0])
 
-    # Delete resolution
-    def delete_merge(self, x, i, j):
+    def delete_merge(self, x: BTreeNode, i: int, j: int) -> None:
+        """
+        Merge two child nodes during deletion.
+        """
         cnode = x.child[i]
 
         if j > i:
@@ -153,10 +182,10 @@ class BTree:
         else:
             lsnode = x.child[j]
             lsnode.keys.append(x.keys[j])
-            for i in range(len(cnode.keys)):
-                lsnode.keys.append(cnode.keys[i])
+            for idx in range(len(cnode.keys)):
+                lsnode.keys.append(cnode.keys[idx])
                 if len(lsnode.child) > 0:
-                    lsnode.child.append(cnode.child[i])
+                    lsnode.child.append(cnode.child[idx])
             if len(lsnode.child) > 0:
                 lsnode.child.append(cnode.child.pop())
             new = lsnode
@@ -166,8 +195,10 @@ class BTree:
         if x == self.root and len(x.keys) == 0:
             self.root = new
 
-    # Delete the sibling
-    def delete_sibling(self, x, i, j):
+    def delete_sibling(self, x: BTreeNode, i: int, j: int) -> None:
+        """
+        Borrow a key from a sibling during deletion.
+        """
         cnode = x.child[i]
         if i < j:
             rsnode = x.child[j]
@@ -184,25 +215,25 @@ class BTree:
             if len(lsnode.child) > 0:
                 cnode.child.insert(0, lsnode.child.pop())
 
-    # Print the tree
-    def print_tree(self, x, l=0):
-        print("Level ", l, " ", len(x.keys), end=":")
+    def print_tree(self, x: Optional[BTreeNode], l: int = 0) -> None:
+        """
+        Print the B-tree structure.
+        """
+        print(f"Level {l} {len(x.keys)}:", end=" ")
         for i in x.keys:
             print(i, end=" ")
         print()
         l += 1
         if len(x.child) > 0:
-            for i in x.child:
-                self.print_tree(i, l)
+            for child in x.child:
+                self.print_tree(child, l)
 
 
-B = BTree(3)
-
-for i in range(10):
-    B.insert((i, 2 * i))
-
-B.print_tree(B.root)
-
-B.delete(B.root, (8,))
-print("\n")
-B.print_tree(B.root)
+if __name__ == "__main__":
+    B = BTree(3)
+    for i in range(10):
+        B.insert((i, 2 * i))
+    B.print_tree(B.root)
+    B.delete(B.root, (8,))
+    print("\n")
+    B.print_tree(B.root)
