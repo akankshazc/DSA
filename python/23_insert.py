@@ -1,33 +1,39 @@
-# B+ tee in python
 
+"""
+B+ tree insert implementation in Python.
+Supports insert and search operations.
+"""
 
 import math
-
-# Node creation
-
+from typing import List, Optional, Any
 
 class Node:
-    def __init__(self, order):
-        self.order = order
-        self.values = []
-        self.keys = []
-        self.nextKey = None
-        self.parent = None
-        self.check_leaf = False
+    """
+    Node of a B+ tree.
+    """
+    def __init__(self, order: int):
+        self.order: int = order
+        self.values: List[Any] = []
+        self.keys: List[Any] = []
+        self.nextKey: Optional['Node'] = None
+        self.parent: Optional['Node'] = None
+        self.check_leaf: bool = False
 
-    # Insert at the leaf
-    def insert_at_leaf(self, leaf, value, key):
-        if (self.values):
+    def insert_at_leaf(self, leaf: 'Node', value: Any, key: Any) -> None:
+        """
+        Insert a key-value pair at the leaf node.
+        """
+        if self.values:
             temp1 = self.values
             for i in range(len(temp1)):
-                if (value == temp1[i]):
+                if value == temp1[i]:
                     self.keys[i].append(key)
                     break
-                elif (value < temp1[i]):
+                elif value < temp1[i]:
                     self.values = self.values[:i] + [value] + self.values[i:]
                     self.keys = self.keys[:i] + [[key]] + self.keys[i:]
                     break
-                elif (i + 1 == len(temp1)):
+                elif i + 1 == len(temp1):
                     self.values.append(value)
                     self.keys.append([key])
                     break
@@ -37,18 +43,24 @@ class Node:
 
 
 # B plus tree
+
 class BplusTree:
-    def __init__(self, order):
-        self.root = Node(order)
+    """
+    B+ tree implementation supporting insert and search operations.
+    """
+    def __init__(self, order: int):
+        self.root: Node = Node(order)
         self.root.check_leaf = True
 
-    # Insert operation
-    def insert(self, value, key):
+    def insert(self, value: Any, key: Any) -> None:
+        """
+        Insert a value-key pair into the B+ tree.
+        """
         value = str(value)
         old_node = self.search(value)
         old_node.insert_at_leaf(old_node, value, key)
 
-        if (len(old_node.values) == old_node.order):
+        if len(old_node.values) == old_node.order:
             node1 = Node(old_node.order)
             node1.check_leaf = True
             node1.parent = old_node.parent
@@ -61,25 +73,29 @@ class BplusTree:
             old_node.nextKey = node1
             self.insert_in_parent(old_node, node1.values[0], node1)
 
-    # Search operation for different operations
-    def search(self, value):
+    def search(self, value: Any) -> Node:
+        """
+        Search for the leaf node containing the value.
+        """
         current_node = self.root
-        while (current_node.check_leaf == False):
+        while not current_node.check_leaf:
             temp2 = current_node.values
             for i in range(len(temp2)):
-                if (value == temp2[i]):
+                if value == temp2[i]:
                     current_node = current_node.keys[i + 1]
                     break
-                elif (value < temp2[i]):
+                elif value < temp2[i]:
                     current_node = current_node.keys[i]
                     break
-                elif (i + 1 == len(current_node.values)):
+                elif i + 1 == len(current_node.values):
                     current_node = current_node.keys[i + 1]
                     break
         return current_node
 
-    # Find the node
-    def find(self, value, key):
+    def find(self, value: Any, key: Any) -> bool:
+        """
+        Find if a value-key pair exists in the B+ tree.
+        """
         l = self.search(value)
         for i, item in enumerate(l.values):
             if item == value:
@@ -89,9 +105,11 @@ class BplusTree:
                     return False
         return False
 
-    # Inserting at the parent
-    def insert_in_parent(self, n, value, ndash):
-        if (self.root == n):
+    def insert_in_parent(self, n: Node, value: Any, ndash: Node) -> None:
+        """
+        Insert a node into its parent after splitting.
+        """
+        if self.root == n:
             rootNode = Node(n.order)
             rootNode.values = [value]
             rootNode.keys = [n, ndash]
@@ -103,19 +121,17 @@ class BplusTree:
         parentNode = n.parent
         temp3 = parentNode.keys
         for i in range(len(temp3)):
-            if (temp3[i] == n):
-                parentNode.values = parentNode.values[:i] + \
-                    [value] + parentNode.values[i:]
-                parentNode.keys = parentNode.keys[:i +
-                                                  1] + [ndash] + parentNode.keys[i + 1:]
-                if (len(parentNode.keys) > parentNode.order):
+            if temp3[i] == n:
+                parentNode.values = parentNode.values[:i] + [value] + parentNode.values[i:]
+                parentNode.keys = parentNode.keys[:i + 1] + [ndash] + parentNode.keys[i + 1:]
+                if len(parentNode.keys) > parentNode.order:
                     parentdash = Node(parentNode.order)
                     parentdash.parent = parentNode.parent
                     mid = int(math.ceil(parentNode.order / 2)) - 1
                     parentdash.values = parentNode.values[mid + 1:]
                     parentdash.keys = parentNode.keys[mid + 1:]
                     value_ = parentNode.values[mid]
-                    if (mid == 0):
+                    if mid == 0:
                         parentNode.values = parentNode.values[:mid + 1]
                     else:
                         parentNode.values = parentNode.values[:mid]
@@ -126,44 +142,45 @@ class BplusTree:
                         j.parent = parentdash
                     self.insert_in_parent(parentNode, value_, parentdash)
 
-# Print the tree
 
-
-def printTree(tree):
+def print_tree(tree: BplusTree) -> None:
+    """
+    Print the B+ tree structure level by level.
+    """
     lst = [tree.root]
     level = [0]
     leaf = None
     flag = 0
     lev_leaf = 0
 
-    node1 = Node(str(level[0]) + str(tree.root.values))
-
-    while (len(lst) != 0):
+    while lst:
         x = lst.pop(0)
         lev = level.pop(0)
-        if (x.check_leaf == False):
+        if not x.check_leaf:
             for i, item in enumerate(x.keys):
                 print(item.values)
         else:
             for i, item in enumerate(x.keys):
                 print(item.values)
-            if (flag == 0):
+            if flag == 0:
                 lev_leaf = lev
                 leaf = x
                 flag = 1
 
 
-record_len = 3
-bplustree = BplusTree(record_len)
-bplustree.insert('5', '33')
-bplustree.insert('15', '21')
-bplustree.insert('25', '31')
-bplustree.insert('35', '41')
-bplustree.insert('45', '10')
 
-printTree(bplustree)
+if __name__ == "__main__":
+    record_len = 3
+    bplustree = BplusTree(record_len)
+    bplustree.insert('5', '33')
+    bplustree.insert('15', '21')
+    bplustree.insert('25', '31')
+    bplustree.insert('35', '41')
+    bplustree.insert('45', '10')
 
-if (bplustree.find('5', '34')):
-    print("Found")
-else:
-    print("Not found")
+    print_tree(bplustree)
+
+    if bplustree.find('5', '34'):
+        print("Found")
+    else:
+        print("Not found")
