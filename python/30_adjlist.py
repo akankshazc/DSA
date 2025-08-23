@@ -1,19 +1,35 @@
-# Adjascency List representation in Python
+
+"""
+Adjacency List representation of a graph in Python.
+Supports adding edges and printing the adjacency list.
+"""
+
+from typing import Optional, List
 
 
 class AdjNode:
-    def __init__(self, value):
-        self.vertex = value
-        self.next = None
+    """
+    Node in the adjacency list.
+    """
+
+    def __init__(self, value: int):
+        self.vertex: int = value
+        self.next: Optional['AdjNode'] = None
 
 
 class Graph:
-    def __init__(self, num):
-        self.V = num
-        self.graph = [None] * self.V
+    """
+    Undirected graph using adjacency list.
+    """
 
-    # Add edges
-    def add_edge(self, s, d):
+    def __init__(self, num: int):
+        self.V: int = num
+        self.graph: List[Optional[AdjNode]] = [None] * self.V
+
+    def add_edge(self, s: int, d: int) -> None:
+        """
+        Add an undirected edge between s and d.
+        """
         node = AdjNode(d)
         node.next = self.graph[s]
         self.graph[s] = node
@@ -22,25 +38,24 @@ class Graph:
         node.next = self.graph[d]
         self.graph[d] = node
 
-    # Print the graph
-    def print_agraph(self):
+    def print_graph(self) -> None:
+        """
+        Print the adjacency list of the graph.
+        """
         for i in range(self.V):
-            print("Vertex " + str(i) + ":", end="")
+            print(f"Vertex {i}:", end="")
             temp = self.graph[i]
             while temp:
-                print(" -> {}".format(temp.vertex), end="")
+                print(f" -> {temp.vertex}", end="")
                 temp = temp.next
-            print(" \n")
+            print()
 
 
 if __name__ == "__main__":
     V = 5
-
-    # Create graph and edges
     graph = Graph(V)
     graph.add_edge(0, 1)
     graph.add_edge(0, 2)
     graph.add_edge(0, 3)
     graph.add_edge(1, 2)
-
-    graph.print_agraph()
+    graph.print_graph()
