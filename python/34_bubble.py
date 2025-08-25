@@ -1,27 +1,26 @@
-# Bubble sort in Python
+from typing import List
 
-def bubbleSort(array):
+"""
+Bubble Sort Algorithm in Python.
+Sorts a list in ascending order using bubble sort.
+"""
 
-    # loop to access each array element
-    for i in range(len(array)):
 
-        # loop to compare array elements
-        for j in range(0, len(array) - i - 1):
-
-            # compare two adjacent elements
-            # change > to < to sort in descending order
+def bubble_sort(array: List[int]) -> None:
+    """
+    Sorts the input list in ascending order using bubble sort.
+    Args:
+        array (List[int]): List of integers to sort.
+    """
+    n = len(array)
+    for i in range(n):
+        for j in range(0, n - i - 1):
             if array[j] > array[j + 1]:
-
-                # swapping elements if elements
-                # are not in the intended order
-                temp = array[j]
-                array[j] = array[j+1]
-                array[j+1] = temp
+                array[j], array[j + 1] = array[j + 1], array[j]
 
 
-data = [-2, 45, 0, 11, -9]
-
-bubbleSort(data)
-
-print('Sorted Array in Ascending Order:')
-print(data)
+if __name__ == "__main__":
+    data = [-2, 45, 0, 11, -9]
+    bubble_sort(data)
+    print('Sorted Array in Ascending Order:')
+    print(data)
