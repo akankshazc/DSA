@@ -1,63 +1,90 @@
-# Dijkstra's Algorithm in Python
-
+"""
+Dijkstra's Algorithm in Python.
+Finds shortest paths in a weighted graph from a source vertex to all other vertices.
+"""
 
 import sys
-
-# Providing the graph
-vertices = [[0, 0, 1, 1, 0, 0, 0],
-            [0, 0, 1, 0, 0, 1, 0],
-            [1, 1, 0, 1, 1, 0, 0],
-            [1, 0, 1, 0, 0, 0, 1],
-            [0, 0, 1, 0, 0, 1, 0],
-            [0, 1, 0, 0, 1, 0, 1],
-            [0, 0, 0, 1, 0, 1, 0]]
-
-edges = [[0, 0, 1, 2, 0, 0, 0],
-         [0, 0, 2, 0, 0, 3, 0],
-         [1, 2, 0, 1, 3, 0, 0],
-         [2, 0, 1, 0, 0, 0, 1],
-         [0, 0, 3, 0, 0, 2, 0],
-         [0, 3, 0, 0, 2, 0, 1],
-         [0, 0, 0, 1, 0, 1, 0]]
-
-# Find which vertex is to be visited next
-def to_be_visited():
-    global visited_and_distance
-    v = -10
-    for index in range(num_of_vertices):
-        if visited_and_distance[index][0] == 0 \
-            and (v < 0 or visited_and_distance[index][1] <=
-                 visited_and_distance[v][1]):
-            v = index
-    return v
+from typing import List, Tuple
 
 
-num_of_vertices = len(vertices[0])
+class Graph:
+    """
+    Graph class implementing Dijkstra's shortest path algorithm.
+    """
 
-visited_and_distance = [[0, 0]]
-for i in range(num_of_vertices-1):
-    visited_and_distance.append([0, sys.maxsize])
+    def __init__(self, vertices: List[List[int]], edges: List[List[int]]) -> None:
+        """
+        Initialize the graph with adjacency and weight matrices.
+        Args:
+            vertices (List[List[int]]): Adjacency matrix (0/1).
+            edges (List[List[int]]): Weight matrix.
+        """
+        self.vertices = vertices
+        self.edges = edges
+        self.num_vertices = len(vertices[0])
 
-for vertex in range(num_of_vertices):
+    def find_next_vertex(self, distances: List[Tuple[int, int]]) -> int:
+        """
+        Find the unvisited vertex with minimum distance.
+        Args:
+            distances (List[Tuple[int, int]]): List of [visited, distance] pairs.
+        Returns:
+            int: Index of next vertex to visit.
+        """
+        v = -1
+        for index in range(self.num_vertices):
+            if distances[index][0] == 0 and (v < 0 or distances[index][1] <= distances[v][1]):
+                v = index
+        return v
 
-    # Find next vertex to be visited
-    to_visit = to_be_visited()
-    for neighbor_index in range(num_of_vertices):
+    def dijkstra(self) -> List[int]:
+        """
+        Run Dijkstra's algorithm from vertex 'a'.
+        Returns:
+            List[int]: List of shortest distances from source.
+        """
+        distances = [[0, 0]]
+        for _ in range(self.num_vertices - 1):
+            distances.append([0, sys.maxsize])
 
-        # Updating new distances
-        if vertices[to_visit][neighbor_index] == 1 and \
-                visited_and_distance[neighbor_index][0] == 0:
-            new_distance = visited_and_distance[to_visit][1] \
-                + edges[to_visit][neighbor_index]
-            if visited_and_distance[neighbor_index][1] > new_distance:
-                visited_and_distance[neighbor_index][1] = new_distance
-        
-        visited_and_distance[to_visit][0] = 1
+        for _ in range(self.num_vertices):
+            current = self.find_next_vertex(distances)
+            for neighbor in range(self.num_vertices):
+                if (self.vertices[current][neighbor] == 1 and
+                        distances[neighbor][0] == 0):
+                    new_distance = distances[current][1] + \
+                        self.edges[current][neighbor]
+                    if distances[neighbor][1] > new_distance:
+                        distances[neighbor][1] = new_distance
+            distances[current][0] = 1
 
-i = 0
+        return [d[1] for d in distances]
 
-# Printing the distance
-for distance in visited_and_distance:
-    print("Distance of ", chr(ord('a') + i),
-          " from source vertex: ", distance[1])
-    i = i + 1
+
+if __name__ == "__main__":
+    # Example graph representation
+    vertices = [
+        [0, 0, 1, 1, 0, 0, 0],
+        [0, 0, 1, 0, 0, 1, 0],
+        [1, 1, 0, 1, 1, 0, 0],
+        [1, 0, 1, 0, 0, 0, 1],
+        [0, 0, 1, 0, 0, 1, 0],
+        [0, 1, 0, 0, 1, 0, 1],
+        [0, 0, 0, 1, 0, 1, 0]
+    ]
+    edges = [
+        [0, 0, 1, 2, 0, 0, 0],
+        [0, 0, 2, 0, 0, 3, 0],
+        [1, 2, 0, 1, 3, 0, 0],
+        [2, 0, 1, 0, 0, 0, 1],
+        [0, 0, 3, 0, 0, 2, 0],
+        [0, 3, 0, 0, 2, 0, 1],
+        [0, 0, 0, 1, 0, 1, 0]
+    ]
+
+    graph = Graph(vertices, edges)
+    distances = graph.dijkstra()
+
+    for i, distance in enumerate(distances):
+        print(
+            f"Distance of {chr(ord('a') + i)} from source vertex: {distance}")
