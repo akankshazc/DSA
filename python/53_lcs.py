@@ -1,47 +1,50 @@
-# The longest common subsequence in Python
+"""
+Longest Common Subsequence (LCS) Algorithm in Python.
+Finds the longest common subsequence between two strings.
+"""
+
+from typing import List
 
 
-# Function to find lcs_algo
-def lcs_algo(S1, S2, m, n):
-    L = [[0 for x in range(n+1)] for x in range(m+1)]
-
-    # Building the mtrix in bottom-up way
-    for i in range(m+1):
-        for j in range(n+1):
+def lcs_algo(S1: str, S2: str, m: int, n: int) -> None:
+    """
+    Prints the longest common subsequence between S1 and S2.
+    Args:
+        S1 (str): First string.
+        S2 (str): Second string.
+        m (int): Length of S1.
+        n (int): Length of S2.
+    """
+    L: List[List[int]] = [[0 for _ in range(n + 1)] for _ in range(m + 1)]
+    for i in range(m + 1):
+        for j in range(n + 1):
             if i == 0 or j == 0:
                 L[i][j] = 0
-            elif S1[i-1] == S2[j-1]:
-                L[i][j] = L[i-1][j-1] + 1
+            elif S1[i - 1] == S2[j - 1]:
+                L[i][j] = L[i - 1][j - 1] + 1
             else:
-                L[i][j] = max(L[i-1][j], L[i][j-1])
-
+                L[i][j] = max(L[i - 1][j], L[i][j - 1])
     index = L[m][n]
-
-    lcs_algo = [""] * (index+1)
-    lcs_algo[index] = ""
-
-    i = m
-    j = n
+    lcs: List[str] = [""] * (index + 1)
+    lcs[index] = ""
+    i, j = m, n
     while i > 0 and j > 0:
-
-        if S1[i-1] == S2[j-1]:
-            lcs_algo[index-1] = S1[i-1]
+        if S1[i - 1] == S2[j - 1]:
+            lcs[index - 1] = S1[i - 1]
             i -= 1
             j -= 1
             index -= 1
-
-        elif L[i-1][j] > L[i][j-1]:
+        elif L[i - 1][j] > L[i][j - 1]:
             i -= 1
         else:
             j -= 1
-
-    # Printing the sub sequences
-    print("S1 : " + S1 + "\nS2 : " + S2)
-    print("LCS: " + "".join(lcs_algo))
+    print(f"S1 : {S1}\nS2 : {S2}")
+    print(f"LCS: {''.join(lcs)}")
 
 
-S1 = "ACADB"
-S2 = "CBDA"
-m = len(S1)
-n = len(S2)
-lcs_algo(S1, S2, m, n)
+if __name__ == "__main__":
+    S1 = "ACADB"
+    S2 = "CBDA"
+    m = len(S1)
+    n = len(S2)
+    lcs_algo(S1, S2, m, n)
