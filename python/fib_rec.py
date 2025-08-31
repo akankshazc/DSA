@@ -1,15 +1,27 @@
-def fib(n):
-    """Calculate the nth Fibonacci number using recursion."""
+"""
+Recursive Fibonacci in Python.
+Calculates the nth Fibonacci number using recursion.
+"""
+
+from typing import Any
+
+
+def fib(n: int) -> int:
+    """
+    Calculate the nth Fibonacci number using recursion.
+
+    Args:
+        n (int): The position in the Fibonacci sequence (1-based).
+
+    Returns:
+        int: The nth Fibonacci number.
+    """
     if n == 1 or n == 2:
         return 1
-    return fib(n-1) + fib(n-2)
+    return fib(n - 1) + fib(n - 2)
 
 
 if __name__ == "__main__":
-    print(fib(6))  # 8
-    print(fib(7))  # 13
-    print(fib(8))  # 21
-    # Working well so far.
-
-    # Here's is where the time complexity of O(2^n) becomes a problem:
-    print(fib(50))  # 12586269025
+    for i in [6, 7, 8, 50]:
+        print(f"fib({i}) = {fib(i)}")
+    # Note: For large n, this is very slow due to O(2^n) time complexity.
