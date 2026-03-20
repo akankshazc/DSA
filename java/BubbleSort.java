@@ -1,37 +1,51 @@
-// Bubble sort in Java
+
+/**
+ * BubbleSort.java
+ *
+ * Simple implementation of bubble sort with a small demo. The algorithm and
+ * observable behavior are preserved; this edit focuses on readability,
+ * documentation and API clarity.
+ */
 
 import java.util.Arrays;
+import java.util.Objects;
 
-class Main {
+public class BubbleSort {
 
-    // perform the bubble sort
-    static void bubbleSort(int array[]) {
+    /**
+     * Sorts the provided integer array in ascending order using bubble sort.
+     * This method performs the sort in-place.
+     *
+     * @param array the array to sort (must not be null)
+     * @throws NullPointerException if array is null
+     */
+    public static void bubbleSort(int[] array) {
+        Objects.requireNonNull(array, "array must not be null");
         int size = array.length;
 
-        // loop to access each array element
-        for (int i = 0; i < size - 1; i++)
-
-            // loop to compare array elements
-            for (int j = 0; j < size - i - 1; j++)
-
+        for (int i = 0; i < size - 1; i++) {
+            for (int j = 0; j < size - i - 1; j++) {
                 // compare two adjacent elements
                 // change > to < to sort in descending order
                 if (array[j] > array[j + 1]) {
-
-                    // swapping occurs if elements
-                    // are not in the intended order
                     int temp = array[j];
                     array[j] = array[j + 1];
                     array[j + 1] = temp;
                 }
+            }
+        }
     }
 
-    public static void main(String args[]) {
-
+    /**
+     * Small demo that runs bubble sort on a short sample array.
+     * 
+     * @param args command-line arguments (ignored)
+     */
+    public static void main(String[] args) {
         int[] data = { -2, 45, 0, 11, -9 };
+        System.out.println("Original: " + Arrays.toString(data));
 
-        // call method using class name
-        Main.bubbleSort(data);
+        bubbleSort(data);
 
         System.out.println("Sorted Array in Ascending Order:");
         System.out.println(Arrays.toString(data));
