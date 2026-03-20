@@ -1,18 +1,42 @@
-// Bucket sort in Java
+
+/**
+ * BucketSort.java
+ *
+ * Simple bucket sort implementation for floating point numbers in [0, 1).
+ * The method sorts the provided array in-place. This edit focuses on
+ * documentation and readability; the algorithm itself is unchanged.
+ */
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Arrays;
+import java.util.Objects;
 
-class BucketSort {
+public class BucketSort {
+
+    /**
+     * Sorts the provided array of floats (expected in [0, 1)) using bucket sort.
+     * The caller supplies n, the number of buckets to use (typically arr.length).
+     *
+     * Note: This method preserves the original algorithm and expression
+     * for computing the bucket index: (int) arr[i] * n.
+     *
+     * @param arr array of floats to sort (must not be null)
+     * @param n   number of buckets / expected number of elements
+     * @throws NullPointerException if arr is null
+     */
     public void bucketSort(float[] arr, int n) {
+        Objects.requireNonNull(arr, "arr must not be null");
         if (n <= 0)
             return;
+
         @SuppressWarnings("unchecked")
         ArrayList<Float>[] bucket = new ArrayList[n];
 
         // Create empty buckets
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < n; i++) {
             bucket[i] = new ArrayList<Float>();
+        }
 
         // Add elements into the buckets
         for (int i = 0; i < n; i++) {
@@ -22,10 +46,10 @@ class BucketSort {
 
         // Sort the elements of each bucket
         for (int i = 0; i < n; i++) {
-            Collections.sort((bucket[i]));
+            Collections.sort(bucket[i]);
         }
 
-        // Get the sorted array
+        // Concatenate buckets back into array
         int index = 0;
         for (int i = 0; i < n; i++) {
             for (int j = 0, size = bucket[i].size(); j < size; j++) {
@@ -34,14 +58,15 @@ class BucketSort {
         }
     }
 
-    // Driver code
+    /**
+     * Demo for BucketSort.
+     */
     public static void main(String[] args) {
-        BucketSort b = new BucketSort();
-        float[] arr = { (float) 0.42, (float) 0.32, (float) 0.33, (float) 0.52, (float) 0.37, (float) 0.47,
-                (float) 0.51 };
-        b.bucketSort(arr, 7);
+        BucketSort sorter = new BucketSort();
+        float[] arr = { 0.42f, 0.32f, 0.33f, 0.52f, 0.37f, 0.47f, 0.51f };
 
-        for (float i : arr)
-            System.out.print(i + "  ");
+        System.out.println("Original: " + Arrays.toString(arr));
+        sorter.bucketSort(arr, 7);
+        System.out.println("Sorted : " + Arrays.toString(arr));
     }
 }
