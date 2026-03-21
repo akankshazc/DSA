@@ -1,31 +1,45 @@
-// Heap Sort in Java
+/**
+ * Heap sort example (in-place, comparison-based) with minor API/format
+ * improvements for readability. The observable behaviour (sorted output)
+ * is unchanged.
+ */
+public class HeapSort {
 
-class HeapSort {
-
-    public void sort(int arr[]) {
-        int n = arr.length;
+    /**
+     * Sorts the provided array in ascending order using heap sort.
+     * The input array is modified in-place.
+     *
+     * @param arr array to sort (must be non-null)
+     * @throws IllegalArgumentException if {@code arr} is null
+     */
+    public void sort(int[] arr) {
+        if (arr == null)
+            throw new IllegalArgumentException("arr must not be null");
+        final int n = arr.length;
 
         // Build max heap
         for (int i = n / 2 - 1; i >= 0; i--) {
             heapify(arr, n, i);
         }
 
-        // Heap sort
+        // Extract elements from heap one by one
         for (int i = n - 1; i >= 0; i--) {
             int temp = arr[0];
             arr[0] = arr[i];
             arr[i] = temp;
 
-            // Heapify root element
+            // Heapify root element to maintain max-heap property
             heapify(arr, i, 0);
         }
     }
 
-    void heapify(int arr[], int n, int i) {
-        // Find largest among root, left child and right child
-        int largest = i;
-        int l = 2 * i + 1;
-        int r = 2 * i + 2;
+    /**
+     * Heapify subtree rooted at index {@code i} for heap size {@code n}.
+     */
+    private static void heapify(int[] arr, int n, int i) {
+        int largest = i; // Initialize largest as root
+        int l = 2 * i + 1; // left = 2*i + 1
+        int r = 2 * i + 2; // right = 2*i + 2
 
         if (l < n && arr[l] > arr[largest])
             largest = l;
@@ -33,27 +47,34 @@ class HeapSort {
         if (r < n && arr[r] > arr[largest])
             largest = r;
 
-        // Swap and continue heapifying if root is not largest
+        // If largest is not root
         if (largest != i) {
             int swap = arr[i];
             arr[i] = arr[largest];
             arr[largest] = swap;
 
+            // Recursively heapify the affected subtree
             heapify(arr, n, largest);
         }
     }
 
-    // Function to print an array
-    static void printArray(int arr[]) {
-        int n = arr.length;
+    /**
+     * Print array elements separated by a space (keeps original demo output).
+     *
+     * @param arr array to print (must be non-null)
+     */
+    static void printArray(int[] arr) {
+        if (arr == null)
+            return;
+        final int n = arr.length;
         for (int i = 0; i < n; ++i)
             System.out.print(arr[i] + " ");
         System.out.println();
     }
 
-    // Driver code
-    public static void main(String args[]) {
-        int arr[] = { 1, 12, 9, 5, 6, 10 };
+    // Driver code (keeps original sample)
+    public static void main(String[] args) {
+        int[] arr = { 1, 12, 9, 5, 6, 10 };
 
         HeapSort hs = new HeapSort();
         hs.sort(arr);
