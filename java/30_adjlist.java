@@ -1,11 +1,25 @@
-// Adjascency List representation in Java
 
-import java.util.*;
+/**
+ * Adjacency-list representation (undirected) demo.
+ *
+ * This file demonstrates building a simple undirected graph using an
+ * adjacency list backed by {@link java.util.ArrayList}. The example output
+ * and algorithmic behaviour are preserved; the code is refactored for
+ * readability and uses the {@link java.util.List} interface.
+ */
+
+import java.util.List;
+import java.util.ArrayList;
 
 class Graph {
 
-    // Add edge
-    static void addEdge(ArrayList<ArrayList<Integer>> am, int s, int d) {
+    /**
+     * Add an undirected edge between {@code s} and {@code d} in the
+     * adjacency list {@code am}.
+     *
+     * @throws IndexOutOfBoundsException if s or d are out of range for am
+     */
+    static void addEdge(List<List<Integer>> am, int s, int d) {
         am.get(s).add(d);
         am.get(d).add(s);
     }
@@ -14,10 +28,11 @@ class Graph {
 
         // Create the graph
         int V = 5;
-        ArrayList<ArrayList<Integer>> am = new ArrayList<ArrayList<Integer>>(V);
+        List<List<Integer>> am = new ArrayList<>(V);
 
-        for (int i = 0; i < V; i++)
+        for (int i = 0; i < V; i++) {
             am.add(new ArrayList<Integer>());
+        }
 
         // Add edges
         addEdge(am, 0, 1);
@@ -28,12 +43,12 @@ class Graph {
         printGraph(am);
     }
 
-    // Print the graph
-    static void printGraph(ArrayList<ArrayList<Integer>> am) {
+    // Print the graph (keeps the original printed layout)
+    static void printGraph(List<List<Integer>> am) {
         for (int i = 0; i < am.size(); i++) {
             System.out.println("\nVertex " + i + ":");
-            for (int j = 0; j < am.get(i).size(); j++) {
-                System.out.print(" -> " + am.get(i).get(j));
+            for (Integer neighbor : am.get(i)) {
+                System.out.print(" -> " + neighbor);
             }
             System.out.println();
         }
