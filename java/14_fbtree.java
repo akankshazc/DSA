@@ -1,5 +1,7 @@
-// Checking if a binary tree is a full binary tree in Java
-
+/**
+ * Check whether a binary tree is a full binary tree. A full binary tree is a
+ * tree in which every node has either 0 or 2 children.
+ */
 class Node {
     int data;
     Node leftChild, rightChild;
@@ -13,21 +15,38 @@ class Node {
 class BinaryTree {
     Node root;
 
-    // Check for Full Binary Tree
+    /**
+     * Determine whether the subtree rooted at {@code node} is a full binary
+     * tree. The method is recursive and preserves the original algorithm.
+     *
+     * @param node subtree root (may be null)
+     * @return true if the subtree is full, or if {@code node} is null
+     */
     boolean isFullBinaryTree(Node node) {
-
-        // Checking tree emptiness
-        if (node == null)
+        // An empty tree is considered full
+        if (node == null) {
             return true;
+        }
 
-        // Checking the children
-        if (node.leftChild == null && node.rightChild == null)
+        // A leaf node is full
+        if (node.leftChild == null && node.rightChild == null) {
             return true;
+        }
 
-        if ((node.leftChild != null) && (node.rightChild != null))
-            return (isFullBinaryTree(node.leftChild) && isFullBinaryTree(node.rightChild));
+        // If both left and right are non-null, check recursively
+        if (node.leftChild != null && node.rightChild != null) {
+            return isFullBinaryTree(node.leftChild) && isFullBinaryTree(node.rightChild);
+        }
 
+        // One child only -> not full
         return false;
+    }
+
+    /**
+     * Convenience wrapper: check whether the whole tree (root) is full.
+     */
+    public boolean isFull() {
+        return isFullBinaryTree(root);
     }
 
     public static void main(String args[]) {
@@ -40,9 +59,10 @@ class BinaryTree {
         tree.root.rightChild.leftChild = new Node(6);
         tree.root.rightChild.rightChild = new Node(7);
 
-        if (tree.isFullBinaryTree(tree.root))
+        if (tree.isFull()) {
             System.out.print("The tree is a full binary tree");
-        else
+        } else {
             System.out.print("The tree is not a full binary tree");
+        }
     }
 }
