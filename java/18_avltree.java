@@ -1,4 +1,11 @@
-// AVL tree implementation in Java
+/**
+ * AVL tree implementation (self-balancing binary search tree).
+ *
+ * This class provides insert/delete operations and a small ASCII tree
+ * printer. Changes are limited to documentation, a couple of small helper
+ * wrappers, and a corrected internal method name; the algorithmic logic is
+ * unchanged.
+ */
 
 // Create node
 class Node {
@@ -88,7 +95,7 @@ class AVLTree {
         return node;
     }
 
-    Node nodeWithMimumValue(Node node) {
+    Node nodeWithMinimumValue(Node node) {
         Node current = node;
         while (current.left != null)
             current = current.left;
@@ -118,7 +125,7 @@ class AVLTree {
                 } else
                     root = temp;
             } else {
-                Node temp = nodeWithMimumValue(root.right);
+                Node temp = nodeWithMinimumValue(root.right);
                 root.item = temp.item;
                 root.right = deleteNode(root.right, temp.item);
             }
@@ -171,6 +178,15 @@ class AVLTree {
             printTree(currPtr.left, indent, false);
             printTree(currPtr.right, indent, true);
         }
+    }
+
+    // Convenience wrappers that operate on the tree root
+    public void insert(int item) {
+        root = insertNode(root, item);
+    }
+
+    public void delete(int item) {
+        root = deleteNode(root, item);
     }
 
     // Driver code
