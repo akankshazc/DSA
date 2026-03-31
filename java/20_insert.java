@@ -1,8 +1,14 @@
-// Inserting a key on a B-tree in Java 
-
+/**
+ * B‑Tree insertion demo. This class keeps the original insertion algorithm and
+ * display behaviour but adds minimal documentation and basic parameter
+ * validation.
+ *
+ * Note: The class is intentionally package-private to match the repository's
+ * existing convention of demo classes.
+ */
 class BTree {
 
-    private int T;
+    private final int T; // Minimum degree
 
     // Node Creation
     public class Node {
@@ -18,11 +24,13 @@ class BTree {
                 }
             }
             return -1;
-        };
+        }
     }
 
     public BTree(int t) {
-        T = t;
+        if (t < 2)
+            throw new IllegalArgumentException("B-tree minimum degree must be >= 2");
+        this.T = t;
         root = new Node();
         root.n = 0;
         root.leaf = true;
@@ -86,7 +94,6 @@ class BTree {
             int i = 0;
             for (i = x.n - 1; i >= 0 && k < x.key[i]; i--) {
             }
-            ;
             i++;
             Node tmp = x.child[i];
             if (tmp.n == 2 * T - 1) {
@@ -106,7 +113,8 @@ class BTree {
 
     // Display the tree
     private void display(Node x) {
-        assert (x == null);
+        if (x == null)
+            return;
         for (int i = 0; i < x.n; i++) {
             System.out.print(x.key[i] + " ");
         }
