@@ -1,5 +1,11 @@
-// Checking if a binary tree is a complete binary tree in Java
-
+/**
+ * Check whether a binary tree is a complete binary tree.
+ *
+ * A complete binary tree is a binary tree in which all the levels are
+ * completely filled except possibly the last level and the last level has
+ * all keys as left as possible. This class preserves the original algorithm
+ * and example while improving readability and adding small wrapper methods.
+ */
 // Node creation
 class Node {
   int data;
@@ -14,25 +20,35 @@ class Node {
 class BinaryTree {
   Node root;
 
-  // Count the number of nodes
-  int countNumNodes(Node root) {
+  /**
+   * Count the number of nodes in the subtree rooted at {@code node}.
+   */
+  public int countNumNodes(Node root) {
     if (root == null)
-      return (0);
-    return (1 + countNumNodes(root.left) + countNumNodes(root.right));
+      return 0;
+    return 1 + countNumNodes(root.left) + countNumNodes(root.right);
   }
 
-  // Check for complete binary tree
-  boolean checkComplete(Node root, int index, int numberNodes) {
-
-    // Check if the tree is empty
+  /**
+   * Recursive helper to check whether a tree is complete. {@code index}
+   * represents the index of the current node in an array representation of
+   * the tree and {@code numberNodes} is the total number of nodes.
+   */
+  public boolean checkComplete(Node root, int index, int numberNodes) {
     if (root == null)
-      return true;
-
+      return true; // empty trees are complete
     if (index >= numberNodes)
       return false;
+    return checkComplete(root.left, 2 * index + 1, numberNodes)
+        && checkComplete(root.right, 2 * index + 2, numberNodes);
+  }
 
-    return (checkComplete(root.left, 2 * index + 1, numberNodes)
-        && checkComplete(root.right, 2 * index + 2, numberNodes));
+  /**
+   * Convenience wrapper: check whether the entire tree is complete.
+   */
+  public boolean isComplete() {
+    int nodeCount = countNumNodes(root);
+    return checkComplete(root, 0, nodeCount);
   }
 
   public static void main(String args[]) {
@@ -45,10 +61,7 @@ class BinaryTree {
     tree.root.left.left = new Node(4);
     tree.root.right.left = new Node(6);
 
-    int node_count = tree.countNumNodes(tree.root);
-    int index = 0;
-
-    if (tree.checkComplete(tree.root, index, node_count))
+    if (tree.isComplete())
       System.out.println("The tree is a complete binary tree");
     else
       System.out.println("The tree is not a complete binary tree");
