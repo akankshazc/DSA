@@ -1,7 +1,7 @@
 
 // Searching a key on a B-tree in Java 
 
-public class BTree {
+class BTree {
 
     private int T;
 
